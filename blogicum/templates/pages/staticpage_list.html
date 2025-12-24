@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Статичные страницы{% endblock %}
+{% block content %}
+  <h1 class="mb-4">Статичные страницы</h1>
+  <ul>
+    {% for page in pages %}
+      <li>
+        <a href="{% url 'pages:staticpage_detail' page.slug %}">{{ page.title }}</a>
+      </li>
+    {% empty %}
+      <li>Нет страниц</li>
+    {% endfor %}
+  </ul>
+  {% if user.is_staff %}
+    <a href="{% url 'pages:staticpage_create' %}" class="btn btn-primary">Создать страницу</a>
+  {% endif %}
+{% endblock %}

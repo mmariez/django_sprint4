@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% load django_bootstrap5 %}
+{% block title %}
+  {% if '/edit_comment/' in request.path %}
+    Редактирование комментария
+  {% else %}
+    Удаление комментария
+  {% endif %}
+{% endblock %}
+{% block content %}
+  <div class="col d-flex justify-content-center">
+    <div class="card" style="width: 40rem;">
+      <div class="card-header">
+        {% if '/edit_comment/' in request.path %}
+          Редактирование комментария
+        {% else %}
+          Удаление комментария
+        {% endif %}
+      </div>
+      <div class="card-body">
+        
+        {% if '/edit_comment/' in request.path %}
+          {# Форма редактирования #}
+          <form method="post" action="{% url 'blog:edit_comment' comment.post.id comment.id %}">
+            {% csrf_token %}
+            {% bootstrap_form form %}
+            <div class="d-flex justify-content-between">
+              {% bootstrap_button button_type="submit" content="Сохранить" %}
+              <a href="{% url 'blog:post_detail' comment.post.id %}" class="btn btn-secondary">
+                Отмена
+              </a>
+            </div>
+          </form>
+          
+        {% else %}
+          {# Страница подтверждения удаления #}
+          <div class="alert alert-warning">
+            <h5 class="alert-heading">Вы уверены, что хотите удалить этот комментарий?</h5>
+            <p><strong>Текст комментария:</strong></p>
+            <blockquote class="blockquote">
+              <p class="mb-0">{{ comment.text|linebreaksbr }}</p>
+              <footer class="blockquote-footer mt-2">
+                {{ comment.author.username }}, {{ comment.created_at|date:"d E Y, H:i" }}
+              </footer>
+            </blockquote>
+            <hr>
+            <p class="mb-3">Это действие нельзя будет отменить.</p>
+            
+            <form method="post" action="{% url 'blog:delete_comment' comment.post.id comment.id %}">
+              {% csrf_token %}
+              <div class="d-flex justify-content-between">
+                <button type="submit" class="btn btn-danger">Да, удалить</button>
+                <a href="{% url 'blog:post_detail' comment.post.id %}" class="btn btn-secondary">
+                  Отмена
+                </a>
+              </div>
+            </form>
+          </div>
+        {% endif %}
+        
+      </div>
+    </div>
+  </div>
+{% endblock %}
