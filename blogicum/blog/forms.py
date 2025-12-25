@@ -33,6 +33,4 @@ class CommentForm(forms.ModelForm):
 
 
 class DeleteConfirmForm(forms.Form):
-    """Форма подтверждения удаления (пустая)."""
-
     pass

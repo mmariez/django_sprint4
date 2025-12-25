@@ -1,21 +1,20 @@
 from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404, redirect
+from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.urls import reverse_lazy
 from django.views.generic import TemplateView
+from django.urls import reverse_lazy
 from django.views import View
 from django.utils.decorators import method_decorator
-from blogicum.utils import send_welcome_email
 from blog.models import Post
+from blogicum.utils import send_welcome_email
 from .forms import CreationForm, EditProfileForm, StaticPageForm
-from .models import StaticPage
 from blog.utils import get_published_posts_with_comments, paginate_posts
+from .models import StaticPage
 
 
-# Кастомные обработчики ошибок
 def csrf_failure(request, reason=''):
     return render(request, 'pages/403csrf.html', status=403)
 
@@ -28,7 +27,6 @@ def server_error(request):
     return render(request, 'pages/500.html', status=500)
 
 
-# Регистрация
 def signup(request):
     if request.method == 'POST':
         form = CreationForm(request.POST)
@@ -75,7 +73,6 @@ def user_profile(request, username):
     return render(request, 'blog/profile.html', context)
 
 
-# Редактирование профиля
 @login_required
 def edit_profile(request):
     if request.method == 'POST':
@@ -88,20 +85,10 @@ def edit_profile(request):
     return render(request, 'blog/user.html', {'form': form})
 
 
-# CBV для статичных страниц
 class StaticPageListView(ListView):
     model = StaticPage
     template_name = 'pages/staticpage_list.html'
     context_object_name = 'pages'
-
-    def get_queryset(self):
-        return StaticPage.objects.filter(is_published=True)
-
-
-class StaticPageDetailView(DetailView):
-    model = StaticPage
-    template_name = 'pages/staticpage_detail.html'
-    context_object_name = 'page'
 
     def get_queryset(self):
         return StaticPage.objects.filter(is_published=True)
@@ -118,6 +105,15 @@ class StaticPageCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
+class StaticPageDetailView(DetailView):
+    model = StaticPage
+    template_name = 'pages/staticpage_detail.html'
+    context_object_name = 'page'
+
+    def get_queryset(self):
+        return StaticPage.objects.filter(is_published=True)
+
+
 class StaticPageUpdateView(LoginRequiredMixin, UpdateView):
     model = StaticPage
     form_class = StaticPageForm
@@ -132,13 +128,14 @@ class AboutView(TemplateView):
     template_name = 'pages/about.html'
 
 
-class RulesView(TemplateView):
-    template_name = 'pages/rules.html'
-
 
 class SignUpView(View):
     def dispatch(self, request, *args, **kwargs):
         return signup(request)
+
+
+class RulesView(TemplateView):
+    template_name = 'pages/rules.html'
 
 
 class EditProfileView(View):

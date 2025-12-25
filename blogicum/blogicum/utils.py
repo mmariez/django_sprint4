@@ -1,10 +1,8 @@
-# blogicum/utils.py
 from django.core.mail import send_mail
 from django.conf import settings
 
 
 def send_welcome_email(user):
-    """Отправляет приветственное письмо новому пользователю."""
     subject = f'{settings.EMAIL_SUBJECT_PREFIX}Добро пожаловать в Блогикум!'
     message = f"""
     Здравствуйте, {user.username}!
@@ -31,7 +29,6 @@ def send_welcome_email(user):
 
 
 def send_comment_notification(post, comment):
-    """Отправляет уведомление автору поста о новом комментарии."""
     if post.author.email:
         subject = f'{settings.EMAIL_SUBJECT_PREFIX}Новый комментарий'
         message = f"""
