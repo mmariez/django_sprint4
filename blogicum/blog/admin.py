@@ -51,7 +51,6 @@ class PostAdmin(admin.ModelAdmin):
     )
 
 
-# Регистрация моделей
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Location, LocationAdmin)
 admin.site.register(Post, PostAdmin)
